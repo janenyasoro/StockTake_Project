@@ -143,10 +143,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # This is important for security - only allow your frontend domain
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",   # React development server
+    "http://localhost",        #docker nginx
+    "http://127.0.0.1",        # Localhost
     "http://localhost:5173",   # Vite development server
     "http://localhost:8000",   # Django development server
     "http://localhost:9000",   # Django alternative port
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (not recommended for production)
+
+#Allow all hosts for development (not recommended for production)
+ALLOWED_HOSTS = ['*']
 
 # Allow credentials (cookies, authorization headers)
 CORS_ALLOW_CREDENTIALS = True
@@ -167,6 +174,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,  # Number of items per page
 }
+
+# Static files settings
+STATIC_URL = '/static/'
+STATIC_ROOT = '/app/staticfiles'  # or '/app/static' depending on your setup
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # If you have a static folder in your app
+]
+
 
 
 # FIREBASE CONFIGURATION 
