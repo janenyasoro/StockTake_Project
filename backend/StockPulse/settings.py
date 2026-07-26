@@ -142,13 +142,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS settings - which domains can access your API
 # This is important for security - only allow your frontend domain
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",   # React development server
-    "http://localhost",        #docker nginx
-    "http://127.0.0.1",        # Localhost
-    "http://localhost:5173",   # Vite development server
-    "http://localhost:8000",   # Django development server
-    "http://localhost:9000",   # Django alternative port
-]
+    "http://localhost:80",   # React development server
+    "http://127.0.0.1:80",        # Localhost
+   "http://192.168.1.100:80",     # Specific IP
+    "http://your-production-domain.com",  # Your production domain 
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (not recommended for production)
 

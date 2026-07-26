@@ -1,19 +1,14 @@
 # Frontend Dockerfile
-FROM node:18-alpine AS build
+FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Install build tools for alpine
-RUN apk add --no-cache python3 make g++
-
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install --force --no-audit --no-fund
+RUN npm install
 
-# Copy source code
+# Copy source code and build
 COPY . .
-
-# Build the application
 RUN npm run build
 
 # Production image
