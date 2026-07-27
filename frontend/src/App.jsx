@@ -21,6 +21,7 @@ import Sales from './pages/Sales'
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/common/Layout'
+import { Ad } from 'lucide-react'
 
 // Create a React Query client
 const queryClient = new QueryClient({
@@ -44,6 +45,24 @@ function App() {
               <Route path="/login" element={<Login />} />
 
               {/* Protected routes */}
+              <Route path="/admin/users" element={
+                <ProtectedRoute requiredRole="admin">
+                  <Users />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/products/new" element={
+                <ProtectedRoute requiredRole="manager">
+                  <ProductForm />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/sales/new" element={
+                <ProtectedRoute requiredRole="staff">
+                  <SalesForm />
+                </ProtectedRoute>
+              } />
+
               <Route path="/" element={
                 <ProtectedRoute>
                   <Layout />
