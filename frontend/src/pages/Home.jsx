@@ -1,22 +1,113 @@
+// src/pages/Home.jsx
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { productAPI, salesAPI } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
+import StatsCard from '../components/dashboard/StatsCard'
+import SalesChart from '../components/dashboard/SalesChart'
+import LowStockAlert from '../components/inventory/LowStockAlert'
+import { Package, AlertTriangle, TrendingUp, DollarSign, PlusCircle } from 'lucide-react'
+import { productAPI } from '../services/api'
+import { useNavigate } from 'react-router-dom'
+
 export default function Home() {
+  const { user, userProfile } = useAuth()
+  const navigate = useNavigate()
   const [stats, setStats] = useState(null)
   const [sales, setSales] = useState(null)
-  const { userRole } = useAuth()
-  useEffect(() => { productAPI.getStats().then(r => setStats(r.data)).catch(() => setStats({})); salesAPI.getSummary().then(r => setSales(r.data)).catch(() => setSales(null)) }, [])
-  const cards = [
-    ['Products', stats?.total_products ?? '–', 'blue'],
-    ['Low-stock alerts', stats?.low_stock_count ?? '–', 'amber'],
-    ['Today’s sales', sales ? `${Number(sales.today.total).toFixed(2)}` : '–', 'emerald'],
-    ['Inventory value', stats ? Number(stats.total_inventory_value).toFixed(2) : '–', 'slate'],
-  ]
-  return (
-    <div className="space-y-7"><div><h2 className="text-2xl font-bold tracking-tight text-slate-900">Good day</h2><p className="mt-1 text-sm text-slate-500">{userRole?.label || 'Team member'} view of stock, sales, and replenishment.</p></div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([label, value, color]) => <div key={label} className={`rounded-xl border bg-white p-5 shadow-sm ${color === 'blue' ? 'border-blue-100' : color === 'emerald' ? 'border-emerald-100' : 'border-slate-200'}`}><p className="text-sm font-medium text-slate-500">{label}</p><p className={`mt-2 text-3xl font-bold ${color === 'blue' ? 'text-blue-600' : color === 'emerald' ? 'text-emerald-600' : 'text-slate-900'}`}>{value}</p></div>)}</div>
-      <div className="grid gap-5 lg:grid-cols-2"><section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h3 className="font-bold text-slate-900">Role capabilities</h3><ul className="mt-4 space-y-3 text-sm text-slate-600"><li>• Admin: dashboard, products, analytics and team oversight</li><li>• Inventory Manager: products, stock adjustments and purchase orders</li><li>• Sales Staff: stock availability and sales recording</li></ul></section><section className="rounded-xl bg-slate-900 p-6 text-white"><p className="text-sm text-slate-400">Next action</p><h3 className="mt-2 text-xl font-bold">Keep best-sellers available.</h3><p className="mt-2 text-sm text-slate-300">Review low-stock products and replenish before sales are missed.</p><Link to="/products" className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-500">View products</Link></section></div>
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      const [statsRes, salesRes] = await Promise.all([
+        productAPI.getStats(),
+        productAPI.getSalesSummary()
+      ])
+      setStats(statsRes.data)
+      setSales(salesRes.data)
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">Loading dashboard...</div>
       </div>
+    )
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Welcome Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Welcome back, {user?.displayName || user?.email || 'User'}! 👋
+          </h1>
+          <p className="text-gray-500 mt-1">
+            {userProfile?.role === 'admin'
+              ? 'You have full access to manage everything.'
+              : userProfile?.role === 'manager'
+                ? 'You can manage inventory and products.'
+                : 'You can view and process sales.'}
+          </p>
+        </div>
+        {userProfile?.role !== 'staff' && (
+          <button
+            onClick={() => navigate('/products')}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            <PlusCircle className="h-5 w-5" />
+            <span>Add Product</span>
+          </button>
+        )}
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          title="Total Products"
+          value={stats?.total_products || 0}
+          icon={<Package className="h-6 w-6" />}
+          color="blue"
+        />
+        <StatsCard
+          title="Low Stock Items"
+          value={stats?.low_stock_count || 0}
+          icon={<AlertTriangle className="h-6 w-6" />}
+          color="red"
+          warning={stats?.low_stock_count > 0}
+        />
+        <StatsCard
+          title="Today's Sales"
+          value={`$${sales?.today?.total || 0}`}
+          subtitle={`${sales?.today?.count || 0} orders`}
+          icon={<TrendingUp className="h-6 w-6" />}
+          color="green"
+        />
+        <StatsCard
+          title="Inventory Value"
+          value={`$${stats?.total_inventory_value || 0}`}
+          icon={<DollarSign className="h-6 w-6" />}
+          color="purple"
+        />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SalesChart salesData={sales?.monthly_trend || []} />
+        </div>
+        <div className="lg:col-span-1">
+          <LowStockAlert />
+        </div>
+      </div>
+    </div>
   )
 }
