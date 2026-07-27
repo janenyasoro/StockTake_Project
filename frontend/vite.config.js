@@ -1,21 +1,26 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/',  // Make sure this is '/'
   server: {
-    port: 3000,
+    port: 5173,
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'https://stockpulse-backend.onrender.com',  // Your Render backend URL
         changeOrigin: true,
-      },
-    },
+      }
+    }
   },
   build: {
     outDir: 'dist',
+    assetsDir: 'assets',
     sourcemap: false,
+    minify: 'esbuild',
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
 })
