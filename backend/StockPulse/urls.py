@@ -4,6 +4,7 @@ This includes all URLs for the project.
 """
 
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -23,7 +24,13 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+
+def health_check(request):
+    """Unauthenticated endpoint used by Render to verify service health."""
+    return JsonResponse({'status': 'ok'})
+
 urlpatterns = [
+    path('health/', health_check, name='health-check'),
     # Admin panel
     path('admin/', admin.site.urls),
     

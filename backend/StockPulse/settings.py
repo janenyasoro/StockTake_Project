@@ -27,9 +27,18 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-her
 # DEBUG=True shows error details - only use during development
 DEBUG = os.getenv('DEBUG', 'True').strip().lower() in ('1', 'true', 'yes', 'on')
 
-# Which domains can access your backend
-# In production, you'd list your actual domain here
-ALLOWED_HOSTS = ['*']  # Change this in production!
+def comma_separated_env(name, default=''):
+    """Return a cleaned list from a comma-separated environment variable."""
+    return [item.strip() for item in os.getenv(name, default).split(',') if item.strip()]
+
+
+# Render provides this host automatically. Local hosts keep development simple,
+# while DJANGO_ALLOWED_HOSTS supports a custom domain when one is added.
+ALLOWED_HOSTS = list({
+    'localhost', '127.0.0.1',
+    *comma_separated_env('DJANGO_ALLOWED_HOSTS'),
+    os.getenv('RENDER_EXTERNAL_HOSTNAME', ''),
+} - {''})
 
 # Application definition
 # These are all the Django apps/modules your project uses
@@ -55,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be first for CORS
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -133,28 +143,18 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings - which domains can access your API
-# This is important for security - only allow your frontend domain
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:80",   # React development server
-    "http://127.0.0.1:80",        # Localhost
-   "http://192.168.1.100:80",     # Specific IP
-    "http://your-production-domain.com", 
- ] # Your production domain 
-
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (not recommended for production)
-
-#Allow all hosts for development (not recommended for production)
-ALLOWED_HOSTS = ['*']
-
-# Allow credentials (cookies, authorization headers)
+# CORS is intentionally explicit in production. Add the Vercel deployment URL
+# as CORS_ALLOWED_ORIGINS in Render's Environment settings.
+CORS_ALLOWED_ORIGINS = comma_separated_env(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:5173,http://localhost:3000,http://localhost:80',
+)
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = comma_separated_env('CSRF_TRUSTED_ORIGINS')
 
 # Django REST Framework settings
 REST_FRAMEWORK = {
@@ -175,10 +175,20 @@ REST_FRAMEWORK = {
 
 # Static files settings
 STATIC_URL = '/static/'
-STATIC_ROOT = '/app/staticfiles'  # or '/app/static' depending on your setup
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # If you have a static folder in your app
+    BASE_DIR / 'static',
 ]
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 
