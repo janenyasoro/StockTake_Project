@@ -27,20 +27,23 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-her
 # DEBUG=True shows error details - only use during development
 DEBUG = os.getenv('DEBUG', 'True').strip().lower() in ('1', 'true', 'yes', 'on')
 
-
 # Helper function to parse comma-separated environment variables
 # Used for ALLOWED_HOSTS, CORS_ALLOWED_ORIGINS, and CSRF_TRUSTED_ORIGINS
-def comma_separated_env(name, default=''):
-    """Return a cleaned list from a comma-separated environment variable."""
-    return [item.strip() for item in os.getenv(name, default).split(',') if item.strip()]
-
+def comma_separated_env(var_name, default=''):
+    """Return a list of values from a comma-separated environment variable."""
+    value = os.getenv(var_name, default)
+    if not value:
+        return []
+    return [item.strip() for item in value.split(',') if item.strip()]
 
 # Allowed hosts configuration
 # Render provides the external hostname automatically via RENDER_EXTERNAL_HOSTNAME
 # Local development hosts (localhost, 127.0.0.1) are always allowed
 # Additional hosts can be added via DJANGO_ALLOWED_HOSTS environment variable
 ALLOWED_HOSTS = list({
-    'localhost', '127.0.0.1', "0.0.0.0",
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
     *comma_separated_env('DJANGO_ALLOWED_HOSTS'),
     os.getenv('RENDER_EXTERNAL_HOSTNAME', ''),
 } - {''})
