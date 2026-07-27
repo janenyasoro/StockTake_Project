@@ -290,8 +290,16 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
     ordering = ['-order_date']
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsStaffUser()]
+        """
+        Different permissions for different actions.
+        Staff can view, managers can create/update, admins can delete.
+        """
+        if self.action in ['create', 'update', 'partial_update']:
+            return [IsManagerUser()]
+        if self.action == 'destroy':
+            return [IsAdminUser()]
+        if self.action == 'receive_order':
+            return [IsManagerUser()]
         return [IsAuthenticated()]
     
     def perform_create(self, serializer):
@@ -336,11 +344,6 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
             'message': 'Order received successfully',
             'order': self.get_serializer(purchase_order).data
         })
-
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy', 'receive_order']:
-            return [IsManagerUser()]
-        return [IsAuthenticated()]
 
 class UserViewSet(viewsets.ModelViewSet):
     """
