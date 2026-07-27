@@ -199,6 +199,11 @@ dist/
 # Gatsby files
 .cache/
 public/
+# The Vite frontend serves its favicon from this directory. Keep that source
+# asset in Git so it is copied to the deployment output.
+!frontend/public/
+frontend/public/*
+!frontend/public/favicon.svg
 
 # Storybook build outputs
 .storybook-out

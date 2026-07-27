@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
@@ -7,9 +5,16 @@ services:
     container_name: stockpulse-backend
     ports:
       - "8000:8000"
+    # Makes the root .env (Firebase credentials and other local secrets)
+    # available inside the container. This file is intentionally not tracked.
+    env_file:
+      - ./.env
     environment:
       - DEBUG=1
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      # Do not use backend/.env here: its credentials may refer to a different
+      # database. These values match the local `db` service below.
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/stockpulse
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     volumes:

@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-her
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG=True shows error details - only use during development
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'True').strip().lower() in ('1', 'true', 'yes', 'on')
 
 # Which domains can access your backend
 # In production, you'd list your actual domain here
