@@ -1,2 +1,8 @@
-import React from 'react'
-export default function Inventory() { return <div><h1 className="text-2xl font-semibold">Inventory</h1></div> }
+import React, { useEffect, useState } from 'react'
+import { productAPI } from '../services/api'
+
+export default function Inventory() {
+  const [items, setItems] = useState([])
+  useEffect(() => { productAPI.getLowStock().then(r => setItems(r.data)).catch(() => setItems([])) }, [])
+  return <section><p className="text-xs font-bold uppercase tracking-wider text-blue-600">Inventory manager</p><h2 className="mt-1 text-2xl font-bold text-slate-900">Low-stock alerts</h2><p className="mt-1 text-sm text-slate-500">Replenish these products before they affect sales.</p><div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"><table className="min-w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500"><tr><th className="px-5 py-4">Product</th><th className="px-5 py-4">Available</th><th className="px-5 py-4">Reorder at</th><th className="px-5 py-4">Suggested order</th></tr></thead><tbody className="divide-y divide-slate-100">{items.map(item => <tr key={item.id}><td className="px-5 py-4 font-semibold text-slate-800">{item.name}<span className="ml-2 font-mono text-xs font-normal text-slate-500">{item.sku}</span></td><td className="px-5 py-4 text-amber-700">{item.stock_quantity}</td><td className="px-5 py-4">{item.reorder_level}</td><td className="px-5 py-4 font-semibold text-blue-600">{item.reorder_quantity} units</td></tr>)}{items.length === 0 && <tr><td colSpan="4" className="px-5 py-10 text-center text-slate-500">All products are above their reorder levels.</td></tr>}</tbody></table></div></section>
+}

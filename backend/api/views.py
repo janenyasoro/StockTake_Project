@@ -67,8 +67,12 @@ class ProductViewSet(viewsets.ModelViewSet):
         Different permissions for different actions.
         Staff can view, only admin can modify.
         """
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update']:
+            return [IsManagerUser()]
+        if self.action == 'destroy':
             return [IsAdminUser()]
+        if self.action == 'update_stock':
+            return [IsManagerUser()]
         return [IsAuthenticated()]
     
     @action(detail=True, methods=['post'])
@@ -91,6 +95,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         try:
             quantity = int(quantity)
             new_stock = product.update_stock(quantity, transaction_type, notes)
+            latest_transaction = product.transactions.first()
+            if latest_transaction:
+                latest_transaction.user = request.user
+                latest_transaction.save(update_fields=['user'])
             return Response({
                 'message': 'Stock updated successfully',
                 'new_stock': new_stock,
@@ -214,7 +222,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsStaffUser()]
+            return [IsManagerUser()]
         return [IsAuthenticated()]
     
     def perform_create(self, serializer):
@@ -328,6 +336,11 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
             'message': 'Order received successfully',
             'order': self.get_serializer(purchase_order).data
         })
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'receive_order']:
+            return [IsManagerUser()]
+        return [IsAuthenticated()]
 
 class UserViewSet(viewsets.ModelViewSet):
     """

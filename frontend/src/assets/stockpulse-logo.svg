@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>StockPulse logo</title>
+  <rect width="64" height="64" rx="16" fill="#0F172A"/>
+  <path d="M14 37h9l5-12 8 22 5-10h9" fill="none" stroke="#10B981" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M17 16h30a4 4 0 0 1 4 4v8H13v-8a4 4 0 0 1 4-4Z" fill="#2563EB"/>
+</svg>

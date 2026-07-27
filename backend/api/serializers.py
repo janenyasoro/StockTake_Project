@@ -118,11 +118,18 @@ class SaleItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_name', 'product_sku', 
                   'quantity', 'price_at_time', 'subtotal']
 
+
+class SaleItemWriteSerializer(serializers.Serializer):
+    """Input for recording a sale; price defaults to the current product price."""
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    quantity = serializers.IntegerField(min_value=1)
+
 class SaleSerializer(serializers.ModelSerializer):
     """
     Serializer for sales with nested items.
     """
     items = SaleItemSerializer(many=True, source='saleitem_set', read_only=True)
+    line_items = SaleItemWriteSerializer(many=True, write_only=True, required=False)
     user_name = serializers.CharField(source='user.username', read_only=True)
     
     class Meta:
@@ -134,9 +141,30 @@ class SaleSerializer(serializers.ModelSerializer):
             'status', 'payment_method',
             'user', 'user_name',
             'items',
+            'line_items',
             'sale_date', 'updated_at'
         ]
-        read_only_fields = ['sale_date', 'updated_at']
+        read_only_fields = ['sale_date', 'updated_at', 'total_amount']
+
+    def create(self, validated_data):
+        line_items = validated_data.pop('line_items', [])
+        if not line_items:
+            raise serializers.ValidationError({'line_items': 'Add at least one product to record a sale.'})
+        validated_data['total_amount'] = 0
+        sale = Sale.objects.create(**validated_data)
+        for item in line_items:
+            product = item['product']
+            quantity = item['quantity']
+            product.update_stock(-quantity, 'sale', f'Sale invoice #{sale.invoice_number}')
+            SaleItem.objects.create(
+                sale=sale,
+                product=product,
+                quantity=quantity,
+                price_at_time=product.price,
+                subtotal=product.price * quantity,
+            )
+        sale.calculate_total()
+        return sale
 
 class PurchaseOrderItemSerializer(serializers.ModelSerializer):
     """

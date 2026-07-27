@@ -16,6 +16,7 @@ import Home from './pages/Home'
 import Products from './pages/Products'
 import Inventory from './pages/Inventory'
 import Reports from './pages/Reports'
+import Sales from './pages/Sales'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -51,6 +52,7 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="products" element={<Products />} />
                 <Route path="inventory" element={<Inventory />} />
+                <Route path="sales" element={<Sales />} />
                 <Route path="reports" element={<Reports />} />
               </Route>
 

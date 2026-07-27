@@ -5,14 +5,22 @@ Different users have different levels of access.
 
 from rest_framework import permissions
 
+
+def role_for(user):
+    """Return the profile role while remaining safe for legacy accounts."""
+    if not user or not user.is_authenticated:
+        return None
+    if user.is_superuser:
+        return 'admin'
+    return getattr(getattr(user, 'profile', None), 'role', 'staff')
+
 class IsAdminUser(permissions.BasePermission):
     """
     Allows access only to admin users.
     Admin has full access to everything.
     """
     def has_permission(self, request, view):
-        # Must be authenticated and have is_superuser=True
-        return request.user and request.user.is_authenticated and request.user.is_superuser
+        return role_for(request.user) == 'admin'
 
 class IsManagerUser(permissions.BasePermission):
     """
@@ -23,9 +31,7 @@ class IsManagerUser(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         
-        # In a real app, you'd have a user profile with role field
-        # For now, we'll check if user is superuser or staff
-        return request.user.is_superuser or request.user.is_staff
+        return role_for(request.user) in ['admin', 'manager']
 
 class IsStaffUser(permissions.BasePermission):
     """
@@ -36,6 +42,4 @@ class IsStaffUser(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         
-        # In a real app, you'd check for a staff role
-        # For now, any authenticated user can perform staff actions
-        return request.user.is_authenticated
+        return role_for(request.user) in ['admin', 'manager', 'staff']
