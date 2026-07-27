@@ -12,6 +12,13 @@ from .models import (
     PurchaseOrder, PurchaseOrderItem
 )
 
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer used by the administrator's user-management endpoint."""
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active']
+        read_only_fields = ['id']
+
 class CategorySerializer(serializers.ModelSerializer):
     """
     Serializer for Categories.

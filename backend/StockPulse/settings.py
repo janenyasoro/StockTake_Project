@@ -145,7 +145,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:80",   # React development server
     "http://127.0.0.1:80",        # Localhost
    "http://192.168.1.100:80",     # Specific IP
-    "http://your-production-domain.com",  # Your production domain 
+    "http://your-production-domain.com", 
+ ] # Your production domain 
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (not recommended for production)
 

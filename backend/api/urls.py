@@ -17,8 +17,10 @@ router.register(r'warehouses', views.WarehouseViewSet)
 router.register(r'transactions', views.StockTransactionViewSet)
 router.register(r'sales', views.SaleViewSet)
 router.register(r'purchase-orders', views.PurchaseOrderViewSet)
+router.register(r'users', views.UserViewSet)
 
 # The API URLs are automatically determined by the router
 urlpatterns = [
+    path('user/role/', views.current_user_role, name='current-user-role'),
     path('', include(router.urls)),
 ]

@@ -5,14 +5,16 @@ Think of views as the controllers that handle the business logic.
 """
 
 from rest_framework import viewsets, status, filters
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Count, Q
+from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 import logging
+from django.contrib.auth.models import User
 
 from .models import (
     Product, Category, Supplier, Warehouse,
@@ -22,11 +24,31 @@ from .models import (
 from .serializers import (
     ProductSerializer, CategorySerializer, SupplierSerializer,
     WarehouseSerializer, StockTransactionSerializer,
-    SaleSerializer, PurchaseOrderSerializer
+    SaleSerializer, PurchaseOrderSerializer, UserSerializer
 )
 from .permissions import IsAdminUser, IsManagerUser, IsStaffUser
 
 logger = logging.getLogger(__name__)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user_role(request):
+    """Return the signed-in user's effective StockPulse role.
+
+    The existing UserProfile role is the source of truth. A sensible fallback
+    is used for legacy users whose profile has not yet been created.
+    """
+    profile = getattr(request.user, 'profile', None)
+    profile_role = getattr(profile, 'role', 'staff')
+    if request.user.is_superuser or profile_role == 'admin':
+        role, label = 'ADMIN', 'Admin'
+    elif profile_role == 'manager':
+        role, label = 'INVENTORY_MANAGER', 'Inventory Manager'
+    else:
+        role, label = 'SALES_AGENT', 'Sales Agent'
+
+    return Response({'role': role, 'label': label, 'email': request.user.email})
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -305,4 +327,50 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
         return Response({
             'message': 'Order received successfully',
             'order': self.get_serializer(purchase_order).data
+        })
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing users and their roles
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        """Get current user profile"""
+        user = request.user
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'role': user.profile.role,
+            'role_display': user.profile.get_role_display(),
+            'phone': user.profile.phone,
+            'is_admin': user.profile.is_admin,
+            'is_manager': user.profile.is_manager,
+            'is_staff': user.profile.is_staff,
+        })
+    
+    @action(detail=True, methods=['post'])
+    def set_role(self, request, pk=None):
+        """Set user role (Admin only)"""
+        user = self.get_object()
+        role = request.data.get('role')
+        
+        if role not in ['admin', 'manager', 'staff']:
+            return Response(
+                {'error': 'Invalid role. Must be admin, manager, or staff'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user.profile.role = role
+        user.profile.save()
+        
+        return Response({
+            'message': f'User {user.username} role updated to {role}',
+            'role': role
         })
