@@ -116,4 +116,74 @@ export const transactionAPI = {
     getAll: (params) => api.get('/transactions/', { params }),
 }
 
+// API functions for Users
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+
+// Get auth token from localStorage
+export const getAuthToken = () => {
+    return localStorage.getItem('authToken')
+}
+
+// Set auth token in localStorage
+export const setAuthToken = (token) => {
+    if (token) {
+        localStorage.setItem('authToken', token)
+    } else {
+        localStorage.removeItem('authToken')
+    }
+}
+
+// Fetch user role from backend
+export const fetchUserRole = async () => {
+    const token = getAuthToken()
+    if (!token) {
+        throw new Error('No auth token found')
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user/role/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching user role:', error)
+        throw error
+    }
+}
+
+// Generic API request function
+export const apiRequest = async (endpoint, options = {}) => {
+    const token = getAuthToken()
+
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers
+    })
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return response.json()
+}
+
+
 export default api
