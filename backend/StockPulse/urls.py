@@ -10,7 +10,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-# API documentation setup
+# API documentation setup using drf-yasg
+# Generates Swagger/OpenAPI documentation automatically
 schema_view = get_schema_view(
     openapi.Info(
         title="StockPulse API",
@@ -25,19 +26,28 @@ schema_view = get_schema_view(
 )
 
 
+# Health check endpoint - used by Render to verify the service is running
 def health_check(request):
     """Unauthenticated endpoint used by Render to verify service health."""
     return JsonResponse({'status': 'ok'})
 
+
+# URL patterns - maps URLs to views
 urlpatterns = [
+    # Health check - used by Render for monitoring
     path('health/', health_check, name='health-check'),
-    # Admin panel
+    
+    # Django admin panel - for database management
     path('admin/', admin.site.urls),
     
     # API endpoints - all API URLs start with /api/
+    # The router in api/urls.py handles all the REST endpoints
     path('api/', include('api.urls')),
     
     # API Documentation
+    # Swagger UI - interactive API docs
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    
+    # ReDoc - alternative API documentation
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
