@@ -1,6 +1,3 @@
-I'll create a comprehensive README.md file for your StockPulse project. Based on what I've seen, this is a full-stack stock management system with React frontend, Django backend, PostgreSQL database, Redis cache, and Firebase authentication.
-
-```markdown
 # 📊 StockPulse - Stock Management System
 
 A full-stack stock management and portfolio tracking application built with React, Django, and Firebase.
