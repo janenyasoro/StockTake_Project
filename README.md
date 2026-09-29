@@ -338,7 +338,3 @@ For support, please contact:
 - React and Django communities
 - All open-source contributors
 
-
-## Instructions to Save the README
-# Navigate to your project root
-cd ~/Moringa/Python/StockPulse_Project
