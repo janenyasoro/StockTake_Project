@@ -1,4 +1,4 @@
-# 📊 StockPulse - Stock Management System
+# 📊 StockTake - Stock Management System
 
 A full-stack stock management and portfolio tracking application built with React, Django, and Firebase.
 
@@ -45,7 +45,7 @@ A full-stack stock management and portfolio tracking application built with Reac
 
 ```bash
 git clone <your-repository-url>
-cd StockPulse_Project
+cd StockTake_Project
 ```
 
 ### 2. Environment Variables
@@ -79,7 +79,7 @@ nano backend/.env
 ```env
 DEBUG=True
 SECRET_KEY=your_django_secret_key
-DATABASE_URL=postgresql://postgres:postgres@db:5432/stockpulse
+DATABASE_URL=postgresql://postgres:postgres@db:5432/stocktake
 REDIS_URL=redis://redis:6379/0
 ```
 
@@ -144,7 +144,7 @@ exit()
 ## 📁 Project Structure
 
 ```
-StockPulse_Project/
+StockTake_Project/
 ├── frontend/                 # React frontend
 │   ├── src/
 │   │   ├── components/      # React components
@@ -157,7 +157,7 @@ StockPulse_Project/
 │   ├── nginx.conf           # Nginx configuration
 │   └── package.json         # Dependencies
 ├── backend/                 # Django backend
-│   ├── stockpulse/          # Main Django project
+│   ├── StockTake/            # Main Django project
 │   ├── api/                 # API endpoints
 │   ├── manage.py            # Django management script
 │   ├── requirements.txt     # Python dependencies
@@ -170,10 +170,10 @@ StockPulse_Project/
 
 | Service | Container Name | Port | Description |
 |---------|---------------|------|-------------|
-| Frontend | stockpulse-frontend | 80 | React app served by Nginx |
-| Backend | stockpulse-backend | 8000 | Django API server |
-| Database | stockpulse-db | 5432 | PostgreSQL database |
-| Redis | stockpulse-redis | 6379 | Redis cache |
+| Frontend | stocktake-frontend | 80 | React app served by Nginx |
+| Backend | stocktake-backend | 8000 | Django API server |
+| Database | stocktake-db | 5432 | PostgreSQL database |
+| Redis | stocktake-redis | 6379 | Redis cache |
 
 ## 🔧 Common Commands
 
@@ -299,7 +299,7 @@ http://YOUR_IP_ADDRESS
 Update the backend `.env`:
 
 ```env
-DATABASE_URL=postgresql://user:password@production-db-host:5432/stockpulse
+DATABASE_URL=postgresql://user:password@production-db-host:5432/stocktake
 ```
 
 ## 📝 API Endpoints

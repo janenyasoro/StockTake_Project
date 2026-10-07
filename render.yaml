@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: stockpulse-api
+    name: stocktake-api
     runtime: python
     rootDir: backend
     buildCommand: bash build.sh
-    startCommand: python manage.py migrate --noinput && gunicorn StockPulse.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py migrate --noinput && gunicorn StockTake.wsgi:application --bind 0.0.0.0:$PORT
     healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION

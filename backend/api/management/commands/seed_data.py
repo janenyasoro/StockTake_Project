@@ -11,7 +11,7 @@ from datetime import timedelta
 import random
 
 class Command(BaseCommand):
-    help = 'Seed database with sample data for StockPulse'
+    help = 'Seed database with sample data for StockTake'
 
     def handle(self, *args, **kwargs):
         self.stdout.write('🚀 Starting seed data creation...')
@@ -49,7 +49,7 @@ class Command(BaseCommand):
         admin_user, created = User.objects.get_or_create(
             username='admin',
             defaults={
-                'email': 'admin@stockpulse.com',
+                'email': 'admin@stocktake.com',
                 'first_name': 'Admin',
                 'last_name': 'User',
                 'is_superuser': True,
@@ -65,7 +65,7 @@ class Command(BaseCommand):
         manager_user, created = User.objects.get_or_create(
             username='manager',
             defaults={
-                'email': 'manager@stockpulse.com',
+                'email': 'manager@stocktake.com',
                 'first_name': 'Jane',
                 'last_name': 'Manager',
                 'is_staff': True,
@@ -80,7 +80,7 @@ class Command(BaseCommand):
         staff_user, created = User.objects.get_or_create(
             username='staff',
             defaults={
-                'email': 'staff@stockpulse.com',
+                'email': 'staff@stocktake.com',
                 'first_name': 'John',
                 'last_name': 'Staff',
             }

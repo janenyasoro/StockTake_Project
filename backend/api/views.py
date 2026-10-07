@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def current_user_role(request):
-    """Return the signed-in user's effective StockPulse role.
+    """Return the signed-in user's effective StockTake role.
 
     The existing UserProfile role is the source of truth. A sensible fallback
     is used for legacy users whose profile has not yet been created.

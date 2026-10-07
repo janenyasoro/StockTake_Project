@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
-import logo from '../assets/stockpulse-logo.svg'
+import logo from '../assets/stocktake-logo.svg'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -129,9 +129,9 @@ export default function Login() {
       {/* Left Panel - Branding */}
       <section className="relative hidden flex-col justify-between p-12 lg:flex xl:p-16">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="StockPulse" className="h-11 w-11" />
+          <img src={logo} alt="StockTake" className="h-11 w-11" />
           <div>
-            <p className="text-lg font-bold text-white">StockPulse</p>
+            <p className="text-lg font-bold text-white">StockTake</p>
             <p className="text-sm text-slate-400">Inventory, in sync</p>
           </div>
         </div>
@@ -169,8 +169,8 @@ export default function Login() {
         <div className="w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl shadow-black/30 sm:p-9 lg:shadow-none">
           <div className="mb-8">
             <div className="flex items-center gap-3 lg:hidden">
-              <img src={logo} className="h-10 w-10" alt="StockPulse" />
-              <span className="font-bold text-slate-900">StockPulse</span>
+              <img src={logo} className="h-10 w-10" alt="StockTake" />
+              <span className="font-bold text-slate-900">StockTake</span>
             </div>
             <p className="mt-6 text-sm font-bold uppercase tracking-wider text-blue-600">Welcome back</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Sign in to your workspace</h2>

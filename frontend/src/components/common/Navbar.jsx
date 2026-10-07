@@ -55,7 +55,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition">
               <Package className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">StockPulse</span>
+              <span className="text-xl font-bold text-gray-900">StockTake</span>
             </Link>
           </div>
 

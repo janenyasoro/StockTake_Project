@@ -1,5 +1,5 @@
 """
-Database models for StockPulse.
+Database models for StockTake.
 Each class below represents a table in your database.
 Think of models as blueprints for your data structure.
 """

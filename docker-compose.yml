@@ -1,20 +1,21 @@
 services:
   backend:
     build: ./backend
-    image: your-username/stockpulse:backend
-    container_name: stockpulse-backend
+    image: your-username/stocktake:backend
+    container_name: stocktake-backend
     ports:
       - "8000:8000"
     # Makes the root .env (Firebase credentials and other local secrets)
     # available inside the container. This file is intentionally not tracked.
     env_file:
-      - ./.env
+      - path: ./.env
+        required: false
     environment:
       - DEBUG=1
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
       # Do not use backend/.env here: its credentials may refer to a different
       # database. These values match the local `db` service below.
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/stockpulse
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/stocktake
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     volumes:
@@ -24,45 +25,45 @@ services:
       - db
       - redis
     networks:
-      - stockpulse-network
+      - stocktake-network
 
   frontend:
     build: ./frontend
-    image: your-username/stockpulse:frontend
-    container_name: stockpulse-frontend
+    image: your-username/stocktake:frontend
+    container_name: stocktake-frontend
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-      - stockpulse-network
+      - stocktake-network
 
   db:
     image: postgres:15-alpine
-    container_name: stockpulse-db
+    container_name: stocktake-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=stockpulse
+      - POSTGRES_DB=stocktake
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - stockpulse-network
+      - stocktake-network
 
   redis:
     image: redis:alpine
-    container_name: stockpulse-redis
+    container_name: stocktake-redis
     ports:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
     networks:
-      - stockpulse-network
+      - stocktake-network
 
 volumes:
   postgres_data:
 
 networks:
-  stockpulse-network:
+  stocktake-network:
     driver: bridge

@@ -9,7 +9,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'https://stockpulse-backend.onrender.com',  // Your Render backend URL
+        target: 'https://stocktake-api.onrender.com',  // Your Render backend URL
         changeOrigin: true,
       }
     }

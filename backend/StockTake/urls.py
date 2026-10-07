@@ -14,7 +14,7 @@ from drf_yasg import openapi
 # Generates Swagger/OpenAPI documentation automatically
 schema_view = get_schema_view(
     openapi.Info(
-        title="StockPulse API",
+        title="StockTake API",
         default_version='v1',
         description="Inventory Management System API",
         terms_of_service="",

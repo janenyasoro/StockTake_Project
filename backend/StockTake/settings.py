@@ -1,5 +1,5 @@
 """
-Django settings for StockPulse project.
+Django settings for StockTake project.
 This file contains ALL configuration for your Django application.
 Think of it as the master control panel for your backend.
 """
@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'whitenoise',                    # Static file serving in production
     
     # Your custom apps
-    'api',                           # Main API application for StockPulse
+    'api',                           # Main API application for StockTake
 ]
 
 
@@ -86,7 +86,7 @@ MIDDLEWARE = [
 ]
 
 # URL configuration - the main URL file
-ROOT_URLCONF = 'StockPulse.urls'
+ROOT_URLCONF = 'StockTake.urls'
 
 # Template settings (we're using React for frontend, so minimal templates here)
 TEMPLATES = [
@@ -106,7 +106,7 @@ TEMPLATES = [
 ]
 
 # WSGI application - used for deployment (Gunicorn, uWSGI, etc.)
-WSGI_APPLICATION = 'StockPulse.wsgi.application'
+WSGI_APPLICATION = 'StockTake.wsgi.application'
 
 
 # Database configuration

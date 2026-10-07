@@ -70,14 +70,14 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/stockpulse-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/stocktake-backend:latest
       
       - name: Build and push Frontend
         uses: docker/build-push-action@v4
         with:
           context: ./frontend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/stockpulse-frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/stocktake-frontend:latest
       
       - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8

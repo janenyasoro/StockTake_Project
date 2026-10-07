@@ -7,7 +7,7 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=StockPulse.settings
+ENV DJANGO_SETTINGS_MODULE=StockTake.settings
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
