@@ -25,7 +25,7 @@ export default function Products() {
     event.preventDefault()
     try { await productAPI.create({ ...form, price: Number(form.price) }); toast.success('Product added'); setForm({ name: '', sku: '', price: '' }); setShowForm(false); setLoading(true); loadProducts() } catch (requestError) { toast.error(requestError.response?.data?.sku?.[0] || 'Could not add product.') }
   }
-  const canManage = isAdmin() || isInventoryManager()
+  const canManage = isAdmin || isInventoryManager
 
   return <section>
     <div className="mb-7 flex flex-wrap items-end justify-between gap-3"><div><h2 className="text-2xl font-bold tracking-tight text-slate-900">Products</h2><p className="mt-1 text-sm text-slate-500">View current stock levels and product pricing.</p></div><div className="flex gap-3">{!loading && <span className="rounded-full bg-slate-200 px-3 py-1 text-sm font-semibold text-slate-700">{products.length} product{products.length === 1 ? '' : 's'}</span>}{canManage && <button onClick={() => setShowForm(!showForm)} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">Add product</button>}</div></div>

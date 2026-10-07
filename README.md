@@ -294,6 +294,22 @@ http://YOUR_IP_ADDRESS
 6. Set up proper logging
 7. Configure CORS settings properly
 
+### Deploy Frontend to Render
+
+The root `render.yaml` defines both services. In Render, create a Blueprint from
+the repository and deploy `stocktake-frontend` as a Static Site. It builds the
+`frontend` directory with `npm ci && npm run build`, publishes `dist`, and sends
+all browser routes to `index.html` for React Router.
+
+The frontend is configured to use:
+
+```text
+https://stockpulse-backend-2iy4.onrender.com/api
+```
+
+Add the deployed frontend origin to the backend's `CORS_ALLOWED_ORIGINS` if the
+Render service name or public URL differs from `stocktake-frontend.onrender.com`.
+
 ### Using a Production Database
 
 Update the backend `.env`:

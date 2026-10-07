@@ -2,23 +2,25 @@ import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
 
 const UserRoleDisplay = () => {
-    const { user, userRole, isAdmin, isSalesAgent, isInventoryManager } = useAuth()
+    const { user, userProfile, isAdmin, isManager } = useAuth()
+    const role = userProfile?.role || 'staff'
+    const isSalesAgent = role === 'staff'
 
     if (!user) {
         return <div>Please login to see your role</div>
     }
 
     const getRoleColor = () => {
-        if (isAdmin()) return '#1976d2'  // Blue
-        if (isSalesAgent()) return '#2e7d32'  // Green
-        if (isInventoryManager()) return '#e65100'  // Orange
+        if (isAdmin) return '#1976d2'  // Blue
+        if (isManager) return '#e65100'  // Orange
+        if (isSalesAgent) return '#2e7d32'  // Green
         return '#9e9e9e'  // Grey
     }
 
     const getRoleBadge = () => {
-        if (isAdmin()) return '🛡️ Admin'
-        if (isSalesAgent()) return '💼 Sales Agent'
-        if (isInventoryManager()) return '📦 Inventory Manager'
+        if (isAdmin) return '🛡️ Admin'
+        if (isManager) return '📦 Inventory Manager'
+        if (isSalesAgent) return '💼 Sales Agent'
         return '👤 User'
     }
 
@@ -45,10 +47,10 @@ const UserRoleDisplay = () => {
                     {getRoleBadge()}
                 </div>
             </div>
-            {userRole && (
+            {userProfile && (
                 <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
-                    <span>Role: <strong>{userRole.role}</strong></span>
-                    {userRole.company && <span> | Company: <strong>{userRole.company}</strong></span>}
+                    <span>Role: <strong>{userProfile.role}</strong></span>
+                    {userProfile.company && <span> | Company: <strong>{userProfile.company}</strong></span>}
                 </div>
             )}
         </div>

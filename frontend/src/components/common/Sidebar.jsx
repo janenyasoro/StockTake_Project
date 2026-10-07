@@ -12,8 +12,8 @@ const links = [
 ]
 
 export default function Sidebar() {
-  const { userRole } = useAuth()
-  const role = userRole?.role
+  const { userProfile } = useAuth()
+  const role = userProfile?.role?.toUpperCase()
   return <aside className="bg-slate-900 text-slate-300 lg:flex lg:w-64 lg:flex-col">
     <div className="flex items-center gap-3 px-5 py-5"><img src={logo} className="h-9 w-9" alt="StockTake" /><div><p className="font-bold text-white">StockTake</p><p className="text-xs text-slate-400">Inventory, in sync</p></div></div>
     <nav className="flex gap-2 overflow-x-auto border-t border-slate-800 px-3 py-3 lg:block lg:border-0 lg:px-4">

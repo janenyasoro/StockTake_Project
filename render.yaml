@@ -21,3 +21,17 @@ services:
         sync: false
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
+
+  - type: web
+    name: stocktake-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://stockpulse-backend-2iy4.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -46,14 +46,14 @@ export default function Home() {
 
     if (userProfile?.role === 'admin' || userProfile?.role === 'manager') {
       actions.push(
-        { label: 'Add Product', icon: PlusCircle, path: '/products/new', color: 'green' },
+        { label: 'Add Product', icon: PlusCircle, path: '/products', color: 'green' },
         { label: 'Purchase Orders', icon: ClipboardList, path: '/purchase-orders', color: 'orange' }
       )
     }
 
     if (userProfile?.role === 'staff' || userProfile?.role === 'manager') {
       actions.push(
-        { label: 'Record Sale', icon: ShoppingBag, path: '/sales/new', color: 'blue' }
+        { label: 'Record Sale', icon: ShoppingBag, path: '/sales', color: 'blue' }
       )
     }
 

@@ -17,11 +17,11 @@ import Products from './pages/Products'
 import Inventory from './pages/Inventory'
 import Reports from './pages/Reports'
 import Sales from './pages/Sales'
+import Users from './pages/Admin/Users'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/common/Layout'
-import { Ad } from 'lucide-react'
 
 // Create a React Query client
 const queryClient = new QueryClient({
@@ -48,18 +48,6 @@ function App() {
               <Route path="/admin/users" element={
                 <ProtectedRoute requiredRole="admin">
                   <Users />
-                </ProtectedRoute>
-              } />
-
-              <Route path="/products/new" element={
-                <ProtectedRoute requiredRole="manager">
-                  <ProductForm />
-                </ProtectedRoute>
-              } />
-
-              <Route path="/sales/new" element={
-                <ProtectedRoute requiredRole="staff">
-                  <SalesForm />
                 </ProtectedRoute>
               } />
 

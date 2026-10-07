@@ -181,7 +181,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # In production, add your frontend domains to CORS_ALLOWED_ORIGINS
 CORS_ALLOWED_ORIGINS = comma_separated_env(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:5173,http://localhost:3000,http://localhost:80,http://localhost:8000'
+    'https://stocktake-frontend.onrender.com,http://localhost:5173,http://localhost:3000,http://localhost:80,http://localhost:8000'
 )
 
 # In development, allow all origins (simplifies testing)
