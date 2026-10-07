@@ -1,4 +1,4 @@
-# 📊 StockPulse - Stock Management System
+# 📊 StockTake - Stock Management System
 
 A full-stack stock management and portfolio tracking application built with React, Django, and Firebase.
 
