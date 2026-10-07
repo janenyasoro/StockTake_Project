@@ -1,356 +1,197 @@
-# 📊 StockTake - Stock Management System
+# StockTake
 
-A full-stack stock management and portfolio tracking application built with React, Django, and Firebase.
+StockTake is a full-stack inventory management application. It combines a React/Vite frontend, a Django REST API, PostgreSQL, and Firebase Authentication.
 
-## 🚀 Features
+## Features
 
-- **User Authentication**: Firebase authentication with email/password login
-- **Stock Management**: Track and manage stock portfolios
-- **Real-time Updates**: Live stock price updates (if configured)
-- **User Dashboard**: Personalized dashboard for each user
-- **Customer Management**: Manage customer accounts and profiles
-- **Responsive Design**: Mobile-friendly interface
-- **Dockerized**: Easy deployment with Docker Compose
+- Firebase email/password and Google authentication
+- Product, category, supplier, warehouse, transaction, sales, and purchase-order management
+- Role-based access for admins, managers, and staff
+- Dashboard statistics, sales summaries, and low-stock alerts
+- Swagger and ReDoc API documentation
+- Docker Compose for local services
+- Render deployment configuration for the backend and frontend
 
-## 🛠️ Technology Stack
+## Stack
 
-### Frontend
-- **React 18** with Vite
-- **Firebase Authentication**
-- **CSS3** with modern styling
-- **Axios** for API calls
-- **React Router** for navigation
+- Frontend: React 18, Vite, React Router, Tailwind CSS, Axios, React Query
+- Backend: Django 4.2, Django REST Framework, Gunicorn
+- Authentication: Firebase Authentication and Firebase Admin SDK
+- Data: SQLite for local development or PostgreSQL in production
+- Hosting: Render, with Nginx available for Docker-based frontend hosting
 
-### Backend
-- **Django 4** with Django REST Framework
-- **PostgreSQL** for production database
-- **Redis** for caching and session management
-- **JWT** or Session-based authentication
+## Project Layout
 
-### DevOps
-- **Docker** and **Docker Compose**
-- **Nginx** for serving frontend
-- **Gunicorn** for Django WSGI server
-
-## 📋 Prerequisites
-
-- **Docker** and **Docker Compose** installed
-- **Firebase** account (for authentication)
-- **Git** (for cloning the repository)
-- At least **4GB RAM** and **10GB free disk space**
-
-## 🔧 Installation & Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone <your-repository-url>
-cd StockTake_Project
+```text
+StockTake_Project/
+├── backend/
+│   ├── StockTake/             # Django project configuration
+│   ├── api/                   # REST API application
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── src/                   # React application
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── render.yaml
+└── README.md
 ```
 
-### 2. Environment Variables
+## Requirements
 
-Create a `.env` file in the frontend directory:
+- Node.js 20 or later and npm
+- Python 3.11 or later
+- Docker and Docker Compose (optional)
+- A Firebase project for authentication
 
-```bash
-nano frontend/.env
-```
+## Local Development
 
-Add your Firebase configuration:
+### 1. Configure frontend variables
+
+Create `frontend/.env`:
 
 ```env
+VITE_API_URL=http://localhost:8000/api
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
 
-### 3. Backend Configuration
+The Firebase values must come from the Firebase console. Do not commit real credentials or private service-account files.
 
-Create a `.env` file in the backend directory (if needed):
+### 2. Start the backend
 
 ```bash
-nano backend/.env
+cd backend
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py runserver
 ```
 
-```env
-DEBUG=True
-SECRET_KEY=your_django_secret_key
-DATABASE_URL=postgresql://postgres:postgres@db:5432/stocktake
-REDIS_URL=redis://redis:6379/0
-```
+The API runs at `http://localhost:8000`.
 
-### 4. Build and Run with Docker
+### 3. Start the frontend
+
+In a second terminal:
 
 ```bash
-# Build all services
-docker-compose build
-
-# Start all services
-docker-compose up -d
-
-# Check if all containers are running
-docker-compose ps
+cd frontend
+npm ci
+npm run dev
 ```
 
-### 5. Database Migrations
+The frontend runs at `http://localhost:5173`.
+
+### 4. Create an administrator
 
 ```bash
-# Run migrations
-docker-compose exec backend python manage.py migrate
-
-# Create a superuser (admin)
-docker-compose exec backend python manage.py createsuperuser
+cd backend
+.venv/bin/python manage.py createsuperuser
 ```
 
-### 6. Access the Application
+Firebase-authenticated users receive their application role through the API profile. The backend must have valid Firebase Admin credentials for production authentication.
 
-- **Frontend**: http://localhost or http://192.168.0.101
-- **Backend API**: http://localhost:8000
-- **Admin Panel**: http://localhost:8000/admin
-- **Database**: localhost:5432 (PostgreSQL)
-- **Redis**: localhost:6379
+## Docker Compose
 
-## 🎯 Usage
-
-### Customer Login
-
-1. Open http://localhost in your browser
-2. Click on "Login" or "Sign Up"
-3. Enter your credentials (or create a new account)
-4. You'll be redirected to your dashboard
-
-### Creating a Test User
+Docker Compose starts the frontend, backend, PostgreSQL, and Redis services:
 
 ```bash
-# Create a test user via Django shell
-docker-compose exec backend python manage.py shell
-
-# In the Python shell:
-from django.contrib.auth.models import User
-User.objects.create_user('customer1', 'customer@example.com', 'password123')
-exit()
+docker compose build
+docker compose up -d
+docker compose exec backend python manage.py migrate
+docker compose ps
 ```
 
-### Viewing Stock Data
-
-1. Log in as a customer
-2. Navigate to the "Stocks" or "Dashboard" section
-3. View stock lists, prices, and portfolio
-
-## 📁 Project Structure
-
-```
-StockTake_Project/
-├── frontend/                 # React frontend
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── pages/           # Page components
-│   │   ├── services/        # API services
-│   │   ├── firebase.js      # Firebase configuration
-│   │   └── App.jsx          # Main App component
-│   ├── .env                 # Environment variables
-│   ├── Dockerfile           # Frontend Docker configuration
-│   ├── nginx.conf           # Nginx configuration
-│   └── package.json         # Dependencies
-├── backend/                 # Django backend
-│   ├── StockTake/            # Main Django project
-│   ├── api/                 # API endpoints
-│   ├── manage.py            # Django management script
-│   ├── requirements.txt     # Python dependencies
-│   └── Dockerfile           # Backend Docker configuration
-├── docker-compose.yml       # Docker Compose configuration
-└── README.md               # This file
-```
-
-## 🐳 Docker Services
-
-| Service | Container Name | Port | Description |
-|---------|---------------|------|-------------|
-| Frontend | stocktake-frontend | 80 | React app served by Nginx |
-| Backend | stocktake-backend | 8000 | Django API server |
-| Database | stocktake-db | 5432 | PostgreSQL database |
-| Redis | stocktake-redis | 6379 | Redis cache |
-
-## 🔧 Common Commands
-
-### Docker Management
+Useful commands:
 
 ```bash
-# View all containers
-docker-compose ps
-
-# View logs for a specific service
-docker-compose logs frontend
-docker-compose logs backend
-
-# Stop all containers
-docker-compose down
-
-# Stop and remove volumes (⚠️ removes all data)
-docker-compose down -v
-
-# Rebuild a specific service
-docker-compose build --no-cache frontend
-
-# Restart a service
-docker-compose restart backend
-
-# Execute commands in a container
-docker-compose exec backend bash
-docker-compose exec frontend sh
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose down
 ```
 
-### Django Management
-# Run Django shell
-docker-compose exec backend python manage.py shell
+The Compose setup uses PostgreSQL at `db:5432` and Redis at `redis:6379`. A root `.env` file can provide Firebase and other local secrets; it is optional for Compose configuration validation but required for authentication.
 
-# Create a superuser
-docker-compose exec backend python manage.py createsuperuser
+## Frontend Routes
 
-# Run migrations
-docker-compose exec backend python manage.py migrate
+- `/login` - Firebase sign-in
+- `/` - authenticated dashboard
+- `/products` - product list and product creation
+- `/inventory` - stock control
+- `/sales` - record sales and view recent invoices
+- `/reports` - sales analytics
+- `/admin/users` - admin-only user role management
 
-# Collect static files
-docker-compose exec backend python manage.py collectstatic
-```
+## API Routes
 
-## 🐛 Troubleshooting
+The backend base URL is `/api/`:
 
-### Common Issues
+- `/api/products/`
+- `/api/categories/`
+- `/api/suppliers/`
+- `/api/warehouses/`
+- `/api/transactions/`
+- `/api/sales/`
+- `/api/purchase-orders/`
+- `/api/users/`
+- `/api/user/role/`
 
-#### 1. **Firebase Authentication Error**
-```
-Uncaught FirebaseError: Firebase: Error (auth/invalid-api-key)
-```
-**Solution**: Ensure your `frontend/.env` file has valid Firebase credentials.
+Service and documentation endpoints:
 
-#### 2. **Port Already in Use**
-```
-ERROR: failed to bind host port 0.0.0.0:5432/tcp: address already in use
-```
-**Solution**: Stop the local PostgreSQL service:
-sudo systemctl stop postgresql
-```
+- `/` - API status information
+- `/health/` - Render health check
+- `/swagger/` - Swagger UI
+- `/redoc/` - ReDoc
+- `/admin/` - Django admin
 
-#### 3. **Blank Page / App Not Loading**
-- Check browser console (F12) for errors
-- Verify all containers are running: `docker-compose ps`
-- Check frontend logs: `docker-compose logs frontend`
-- Ensure Firebase credentials are correct
+## Testing and Builds
 
-#### 4. **Database Connection Issues**
-# Restart the database
-docker-compose restart db
-
-# Check database logs
-docker-compose logs db
-```
-
-#### 5. **Docker Build Fails**
-```bash
-# Restart Docker
-sudo systemctl restart docker
-
-# Pull images manually
-docker pull node:18-alpine
-docker pull python:3.10-slim
-docker pull postgres:15
-docker pull redis:alpine
-```
-
-### Network Issues
-
-If you can't access the app:
+Backend checks and tests:
 
 ```bash
-# Check your IP address
-ip addr show | grep -oP '(?<=inet\s)\d+\.\d+\.\d+\.\d+' | grep -v 127.0.0.1
-
-# Try accessing via IP instead of localhost
-http://YOUR_IP_ADDRESS
+cd backend
+.venv/bin/python manage.py check
+.venv/bin/python manage.py test
 ```
 
-## 🔒 Security Notes
+Frontend production build:
 
-- **Change default passwords** in production
-- **Enable HTTPS** with SSL certificates
-- **Set `DEBUG=False`** in Django for production
-- **Use environment variables** for sensitive data
-- **Regularly update** dependencies
+```bash
+cd frontend
+npm run build
+```
 
-## 🚀 Deployment
+## Deploying to Render
 
-### Production Checklist
+The root `render.yaml` defines both services:
 
-1. Update `DEBUG=False` in Django settings
-2. Set strong `SECRET_KEY`
-3. Configure proper `ALLOWED_HOSTS`
-4. Set up SSL/TLS certificate
-5. Use a production database (managed PostgreSQL)
-6. Set up proper logging
-7. Configure CORS settings properly
+- `stocktake-api` builds from `backend` and runs Django with Gunicorn.
+- `stocktake-frontend` builds from `frontend`, publishes `dist`, and rewrites browser routes to `index.html` for React Router.
 
-### Deploy Frontend to Render
+Create a Render Blueprint from this repository. The frontend build uses:
 
-The root `render.yaml` defines both services. In Render, create a Blueprint from
-the repository and deploy `stocktake-frontend` as a Static Site. It builds the
-`frontend` directory with `npm ci && npm run build`, publishes `dist`, and sends
-all browser routes to `index.html` for React Router.
+```text
+npm ci && npm run build
+```
 
-The frontend is configured to use:
+The deployed frontend uses this backend API:
 
 ```text
 https://stockpulse-backend-2iy4.onrender.com/api
 ```
 
-Add the deployed frontend origin to the backend's `CORS_ALLOWED_ORIGINS` if the
-Render service name or public URL differs from `stocktake-frontend.onrender.com`.
+If Render assigns a different public frontend URL, add it to the backend `CORS_ALLOWED_ORIGINS` environment variable. Keep `DEBUG=false` and provide `DJANGO_SECRET_KEY`, `DATABASE_URL`, `FIREBASE_CREDENTIALS`, and the appropriate CORS and CSRF origins in Render.
 
-### Using a Production Database
+## Security Notes
 
-Update the backend `.env`:
-
-```env
-DATABASE_URL=postgresql://user:password@production-db-host:5432/stocktake
-```
-
-## 📝 API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/auth/login/` | POST | User login |
-| `/api/auth/register/` | POST | User registration |
-| `/api/stocks/` | GET | List all stocks |
-| `/api/stocks/:id/` | GET | Get stock details |
-| `/api/portfolio/` | GET | User's portfolio |
-| `/api/transactions/` | POST | Create transaction |
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/development`)
-3. Commit your changes (`git commit -m 'Add developement'`)
-4. Push to the branch (`git push origin feature/development`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Support
-
-For support, please contact:
-- Email: janenyasoro@gmail.com
-
-
-## Acknowledgments
-
-- Firebase for authentication
-- Docker for containerization
-- React and Django communities
-- All open-source contributors
-
+- Never commit Firebase service-account credentials, `.env` files, or production secrets.
+- Use a strong `DJANGO_SECRET_KEY` in production.
+- Keep `DEBUG=false` in production.
+- Restrict `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, and `CSRF_TRUSTED_ORIGINS` to real domains.
+- Use HTTPS for deployed frontend and backend traffic.
