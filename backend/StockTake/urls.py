@@ -32,8 +32,21 @@ def health_check(request):
     return JsonResponse({'status': 'ok'})
 
 
+def root(request):
+    """Return basic service information for the backend root URL."""
+    return JsonResponse({
+        'name': 'StockTake API',
+        'status': 'ok',
+        'health': '/health/',
+        'api': '/api/',
+        'docs': '/swagger/',
+    })
+
+
 # URL patterns - maps URLs to views
 urlpatterns = [
+    path('', root, name='root'),
+
     # Health check - used by Render for monitoring
     path('health/', health_check, name='health-check'),
     
