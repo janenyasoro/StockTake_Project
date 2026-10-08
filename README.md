@@ -137,6 +137,10 @@ The root `render.yaml` defines a Django web service and a static frontend servic
 
 When deploying the frontend separately to Vercel, configure `VITE_API_URL` with the Render API's `/api` URL and add the Vercel domain to the API's CORS and CSRF origin settings. Render's static frontend is optional if Vercel hosts the frontend.
 
+## GitHub Actions and automatic deployment
+
+GitHub Actions checks the Django backend, builds the Vite frontend, and builds both Docker images without publishing them to Docker Hub. Vercel and Render handle deployment through their Git integrations when those projects are connected to this repository and configured to deploy from `main`. The CI workflow does not require Docker Hub credentials or Render API secrets.
+
 ## Build and checks
 
 ```bash

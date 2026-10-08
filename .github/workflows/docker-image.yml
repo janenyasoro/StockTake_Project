@@ -1,18 +1,20 @@
-name: Docker Image CI
+name: Container build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
-
+  build-images:
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v7
+      - name: Build backend image
+        run: docker build --tag stocktake-backend:ci ./backend
+      - name: Build frontend image
+        run: docker build --tag stocktake-frontend:ci ./frontend
