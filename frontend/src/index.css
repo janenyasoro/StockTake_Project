@@ -27,7 +27,7 @@
 }
 
 @layer components {
-  .page-heading { @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl; }
+  .page-heading { @apply text-2xl font-bold tracking-tight text-slate-900; }
   .page-subtitle { @apply mt-1 text-sm leading-6 text-slate-500; }
   .surface-card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
 }
