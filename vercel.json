@@ -2,9 +2,6 @@
   "installCommand": "cd frontend && npm ci",
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
-  "env": {
-    "VITE_API_URL": "https://stockpulse-backend-2iy4.onrender.com/api"
-  },
   "rewrites": [
     {
       "source": "/(.*)",

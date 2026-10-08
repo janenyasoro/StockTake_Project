@@ -1,12 +1,15 @@
 // src/pages/Reports.jsx
 import React, { useEffect, useState } from 'react'
 import { productAPI } from '../services/api'
+import StatsCard from '../components/dashboard/StatsCard'
+import SalesChart from '../components/dashboard/SalesChart'
 import { BarChart3, TrendingUp, DollarSign, ShoppingBag } from 'lucide-react'
 
 export default function Reports() {
   const [loading, setLoading] = useState(true)
   const [salesData, setSalesData] = useState(null)
   const [stats, setStats] = useState(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -22,6 +25,7 @@ export default function Reports() {
       setSalesData(salesRes.data)
     } catch (error) {
       console.error('Error fetching report data:', error)
+      setError('Reports could not be loaded. Check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -29,118 +33,49 @@ export default function Reports() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading reports...</div>
+        <div className="flex h-64 items-center justify-center text-sm text-slate-500">
+        Loading reports...
       </div>
     )
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-7">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
-        <p className="text-gray-500">View sales and inventory insights</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Reports & analytics</h1>
+        <p className="mt-1 text-sm text-slate-500">A clear view of sales performance and inventory value.</p>
       </div>
 
+      {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</p>}
+
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Sales</p>
-              <p className="text-2xl font-bold text-gray-900">
-                ${salesData?.today?.total || 0}
-              </p>
-            </div>
-            <div className="p-3 bg-green-50 rounded-xl">
-              <DollarSign className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {salesData?.today?.count || 0}
-              </p>
-            </div>
-            <div className="p-3 bg-blue-50 rounded-xl">
-              <ShoppingBag className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Products</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats?.total_products || 0}
-              </p>
-            </div>
-            <div className="p-3 bg-purple-50 rounded-xl">
-              <BarChart3 className="h-6 w-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Inventory Value</p>
-              <p className="text-2xl font-bold text-gray-900">
-                ${stats?.total_inventory_value || 0}
-              </p>
-            </div>
-            <div className="p-3 bg-yellow-50 rounded-xl">
-              <TrendingUp className="h-6 w-6 text-yellow-600" />
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatsCard title="Sales today" value={`$${salesData?.today?.total || 0}`} icon={<DollarSign className="h-5 w-5" />} color="green" />
+        <StatsCard title="Orders today" value={salesData?.today?.count || 0} icon={<ShoppingBag className="h-5 w-5" />} color="blue" />
+        <StatsCard title="Total products" value={stats?.total_products || 0} icon={<BarChart3 className="h-5 w-5" />} color="purple" />
+        <StatsCard title="Inventory value" value={`$${stats?.total_inventory_value || 0}`} icon={<TrendingUp className="h-5 w-5" />} color="yellow" />
       </div>
 
       {/* Weekly Sales */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Sales</h2>
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="mb-4 text-lg font-bold text-slate-900">Sales this week</h2>
         <div className="space-y-2">
-          <div className="flex justify-between text-sm text-gray-500">
+          <div className="flex justify-between text-sm text-slate-500">
             <span>This week</span>
             <span>${salesData?.this_week?.total || 0}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="h-2 w-full rounded-full bg-slate-100">
             <div
-              className="bg-blue-600 h-2 rounded-full"
+              className="h-2 rounded-full bg-blue-600 transition-all"
               style={{ width: `${Math.min((salesData?.this_week?.total || 0) / 1000 * 100, 100)}%` }}
             ></div>
           </div>
-          <p className="text-xs text-gray-400">{salesData?.this_week?.count || 0} orders</p>
+          <p className="text-xs text-slate-400">{salesData?.this_week?.count || 0} orders</p>
         </div>
       </div>
 
       {/* Monthly Trend */}
-      {salesData?.monthly_trend && salesData.monthly_trend.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Trend</h2>
-          <div className="space-y-2">
-            {salesData.monthly_trend.slice(-7).map((day, index) => (
-              <div key={index} className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">{day.sale_date__date}</span>
-                <div className="flex items-center space-x-2 flex-1 mx-4">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${Math.min((day.daily_total || 0) / 100 * 100, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <span className="font-medium text-gray-900">${day.daily_total || 0}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {salesData?.monthly_trend?.length > 0 && <SalesChart salesData={salesData.monthly_trend} />}
     </div>
   )
-}y
+}

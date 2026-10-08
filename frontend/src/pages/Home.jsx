@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import StatsCard from '../components/dashboard/StatsCard'
 import SalesChart from '../components/dashboard/SalesChart'
 import LowStockAlert from '../components/inventory/LowStockAlert'
-import { Package, AlertTriangle, TrendingUp, DollarSign, PlusCircle, Users, ShoppingBag, ClipboardList } from 'lucide-react'
+import { Package, AlertTriangle, TrendingUp, DollarSign, Users, ShoppingBag, ClipboardList, ArrowRight, BarChart3 } from 'lucide-react'
 import { productAPI } from '../services/api'
 
 export default function Home() {
@@ -33,81 +33,35 @@ export default function Home() {
     }
   }
 
-  // Role-based quick actions
-  const getQuickActions = () => {
-    const actions = []
-
-    if (userProfile?.role === 'admin') {
-      actions.push(
-        { label: 'Manage Users', icon: Users, path: '/admin/users', color: 'purple' },
-        { label: 'View Analytics', icon: TrendingUp, path: '/reports', color: 'blue' }
-      )
-    }
-
-    if (userProfile?.role === 'admin' || userProfile?.role === 'manager') {
-      actions.push(
-        { label: 'Add Product', icon: PlusCircle, path: '/products', color: 'green' },
-        { label: 'Purchase Orders', icon: ClipboardList, path: '/purchase-orders', color: 'orange' }
-      )
-    }
-
-    if (userProfile?.role === 'staff' || userProfile?.role === 'manager') {
-      actions.push(
-        { label: 'Record Sale', icon: ShoppingBag, path: '/sales', color: 'blue' }
-      )
-    }
-
-    return actions
-  }
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading dashboard...</div>
+        <div className="flex h-64 items-center justify-center text-sm text-slate-500">
+        Loading dashboard...
       </div>
     )
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-7">
       {/* Welcome Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Welcome, {user?.displayName || user?.email || 'User'}! 👋
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Welcome back, {user?.displayName || user?.email || 'there'}
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="mt-1 text-sm leading-6 text-slate-500">
             {userProfile?.role === 'admin'
-              ? '🔐 You have full access to manage everything.'
+              ? 'Your workspace is ready. Review performance and keep your team moving.'
               : userProfile?.role === 'manager'
-                ? '📋 You can manage inventory and products.'
-                : '💼 You can view products and record sales.'}
+                ? 'Your workspace is ready. Keep products and stock levels up to date.'
+                : 'Your workspace is ready. Find products and record sales here.'}
           </p>
-          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border">
-            <span className={`w-2 h-2 rounded-full mr-2 ${userProfile?.role === 'admin' ? 'bg-purple-500' :
-                userProfile?.role === 'manager' ? 'bg-blue-500' : 'bg-gray-500'
+          <div className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700">
+            <span className={`mr-2 h-2 w-2 rounded-full ${userProfile?.role === 'admin' ? 'bg-indigo-500' :
+                userProfile?.role === 'manager' ? 'bg-blue-500' : 'bg-emerald-500'
               }`}></span>
             {userProfile?.role_display || 'Sales Staff'}
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex flex-wrap gap-2">
-          {getQuickActions().map((action) => (
-            <button
-              key={action.label}
-              onClick={() => navigate(action.path)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-white transition-all duration-200 shadow-md hover:shadow-lg ${action.color === 'purple' ? 'bg-purple-600 hover:bg-purple-700' :
-                  action.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' :
-                    action.color === 'green' ? 'bg-green-600 hover:bg-green-700' :
-                      action.color === 'orange' ? 'bg-orange-600 hover:bg-orange-700' :
-                        'bg-gray-600 hover:bg-gray-700'
-                }`}
-            >
-              <action.icon className="h-4 w-4" />
-              <span className="text-sm font-medium">{action.label}</span>
-            </button>
-          ))}
         </div>
       </div>
 
@@ -151,24 +105,29 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Data Models Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
-        {[
-          { name: 'Products', icon: Package, count: stats?.total_products || 0 },
-          { name: 'Categories', icon: Package, count: stats?.categories || 0 },
-          { name: 'Suppliers', icon: Package, count: stats?.suppliers || 0 },
-          { name: 'Sales', icon: ShoppingBag, count: sales?.today?.count || 0 },
-          { name: 'Transactions', icon: ClipboardList, count: 0 },
-          { name: 'Orders', icon: ClipboardList, count: 0 },
-          { name: 'Warehouses', icon: Package, count: 0 },
-        ].map((item) => (
-          <div key={item.name} className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 text-center">
-            <item.icon className="h-5 w-5 text-gray-400 mx-auto mb-1" />
-            <p className="text-lg font-bold text-gray-900">{item.count}</p>
-            <p className="text-xs text-gray-500">{item.name}</p>
-          </div>
-        ))}
-      </div>
+      <section aria-labelledby="next-steps-heading" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="mb-4">
+          <h2 id="next-steps-heading" className="text-lg font-bold text-slate-900">Quick links</h2>
+          <p className="mt-1 text-sm text-slate-500">Jump to the work you do most.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { name: 'Browse products', description: 'Check prices and availability', icon: Package, path: '/products' },
+            { name: 'Record a sale', description: 'Create an invoice and update stock', icon: ShoppingBag, path: '/sales' },
+            ...(userProfile?.role === 'admin' || userProfile?.role === 'manager' ? [{ name: 'Review stock', description: 'See items that need replenishing', icon: ClipboardList, path: '/inventory' }] : []),
+            ...(userProfile?.role === 'admin' ? [
+              { name: 'Sales analytics', description: 'Review sales performance', icon: BarChart3, path: '/reports' },
+              { name: 'Manage users', description: 'Update team roles and access', icon: Users, path: '/admin/users' },
+            ] : []),
+          ].map(item => (
+            <button key={item.path} onClick={() => navigate(item.path)} className="group flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-200 hover:bg-blue-50/50">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition group-hover:bg-blue-100 group-hover:text-blue-700"><item.icon className="h-5 w-5" /></span>
+              <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-slate-800">{item.name}</span><span className="mt-0.5 block text-xs text-slate-500">{item.description}</span></span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-600" />
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }

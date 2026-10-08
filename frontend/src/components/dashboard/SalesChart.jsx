@@ -19,12 +19,12 @@ export default function SalesChart({ salesData }) {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-                    <p className="font-medium text-gray-900">{label}</p>
-                    <p className="text-sm text-gray-600">
+                <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+                    <p className="font-semibold text-slate-900">{label}</p>
+                    <p className="text-sm text-slate-600">
                         Sales: ${payload[0].value.toFixed(2)}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate-600">
                         Orders: {payload[0].payload.count}
                     </p>
                 </div>
@@ -34,20 +34,20 @@ export default function SalesChart({ salesData }) {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Sales Trend</h3>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <h3 className="mb-4 text-lg font-bold text-slate-900">Sales trend</h3>
             <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                        <YAxis tickLine={false} axisLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
                         <Tooltip content={<CustomTooltip />} />
                         <Line
                             type="monotone"
                             dataKey="sales"
-                            stroke="#3B82F6"
-                            strokeWidth={2}
+                            stroke="#2563eb"
+                            strokeWidth={3}
                             dot={false}
                         />
                     </LineChart>

@@ -407,3 +407,6 @@ temp/
 *.token
 *.secret
 *.key
+.vercel
+.env*
+!.env.example

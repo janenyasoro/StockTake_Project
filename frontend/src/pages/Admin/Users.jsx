@@ -40,7 +40,7 @@ export default function Users() {
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="space-y-6">
             <h1 className="text-2xl font-bold mb-6">User Management</h1>
 
             <div className="bg-white rounded-lg shadow overflow-x-auto">
