@@ -5,6 +5,7 @@ Think of them as blueprints for what data the API sends/receives.
 """
 
 from rest_framework import serializers
+from django.db import transaction
 from django.contrib.auth.models import User
 from .models import (
     Category, Supplier, Warehouse, Product, 
@@ -146,6 +147,7 @@ class SaleSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['sale_date', 'updated_at', 'total_amount']
 
+    @transaction.atomic
     def create(self, validated_data):
         line_items = validated_data.pop('line_items', [])
         if not line_items:
@@ -153,9 +155,12 @@ class SaleSerializer(serializers.ModelSerializer):
         validated_data['total_amount'] = 0
         sale = Sale.objects.create(**validated_data)
         for item in line_items:
-            product = item['product']
+            product = Product.objects.select_for_update().get(pk=item['product'].pk)
             quantity = item['quantity']
-            product.update_stock(-quantity, 'sale', f'Sale invoice #{sale.invoice_number}')
+            try:
+                product.update_stock(-quantity, 'sale', f'Sale invoice #{sale.invoice_number}')
+            except ValueError as error:
+                raise serializers.ValidationError({'line_items': str(error)}) from error
             SaleItem.objects.create(
                 sale=sale,
                 product=product,

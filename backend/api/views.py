@@ -221,7 +221,9 @@ class SaleViewSet(viewsets.ModelViewSet):
     ordering = ['-sale_date']
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action == 'create':
+            return [IsStaffUser()]
+        if self.action in ['update', 'partial_update', 'destroy']:
             return [IsManagerUser()]
         return [IsAuthenticated()]
     

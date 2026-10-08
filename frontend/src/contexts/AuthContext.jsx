@@ -5,7 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
-  onAuthStateChanged
+  onIdTokenChanged
 } from 'firebase/auth'
 import { auth } from '../services/firebase'
 import { userAPI } from '../services/api'
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser)
         try {
@@ -84,8 +84,10 @@ export function AuthProvider({ children }) {
       await signOut(auth)
       setUserProfile(null)
       toast.success('Logged out successfully')
+      return true
     } catch (error) {
       toast.error('Error logging out')
+      return false
     }
   }
 
@@ -99,7 +101,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     isAdmin: userProfile?.role === 'admin',
     isManager: userProfile?.role === 'manager' || userProfile?.role === 'admin',
-    isStaff: true
+    isStaff: userProfile?.role === 'staff'
   }
 
   return (

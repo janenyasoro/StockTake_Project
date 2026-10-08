@@ -68,9 +68,9 @@ function App() {
                 }>
                   <Route index element={<Home />} />
                   <Route path="products" element={<Products />} />
-                  <Route path="inventory" element={<Inventory />} />
+                  <Route path="inventory" element={<ProtectedRoute requiredRole="manager"><Inventory /></ProtectedRoute>} />
                   <Route path="sales" element={<Sales />} />
-                  <Route path="reports" element={<Reports />} />
+                  <Route path="reports" element={<ProtectedRoute requiredRole="admin"><Reports /></ProtectedRoute>} />
                   <Route path="admin/users" element={<ProtectedRoute requiredRole="admin"><Users /></ProtectedRoute>} />
                 </Route>
 

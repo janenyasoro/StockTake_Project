@@ -11,8 +11,8 @@ export default function SalesChart({ salesData }) {
     // Format data for the chart
     const data = salesData?.map(item => ({
         date: format(new Date(item.sale_date__date), 'MMM dd'),
-        sales: item.daily_total,
-        count: item.daily_count,
+        sales: Number(item.daily_total) || 0,
+        count: Number(item.daily_count) || 0,
     })) || []
 
     // Custom tooltip for the chart
@@ -22,7 +22,7 @@ export default function SalesChart({ salesData }) {
                 <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
                     <p className="font-semibold text-slate-900">{label}</p>
                     <p className="text-sm text-slate-600">
-                        Sales: ${payload[0].value.toFixed(2)}
+                        Sales: ${Number(payload[0].value).toFixed(2)}
                     </p>
                     <p className="text-sm text-slate-600">
                         Orders: {payload[0].payload.count}

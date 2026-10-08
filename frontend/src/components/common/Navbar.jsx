@@ -20,8 +20,7 @@ export default function Navbar() {
   const role = userProfile?.role_display || userProfile?.role || 'Team member'
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login')
+    if (await logout()) navigate('/login', { replace: true })
   }
 
   return (

@@ -59,7 +59,7 @@ export default function Login() {
       {/* Left Panel - Branding */}
       <section className="relative hidden flex-col justify-between p-12 lg:flex xl:p-16 2xl:p-20">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="StockTake" className="h-9 w-9" />
+          <img src={logo} alt="StockTake" width="28" height="28" className="h-7 w-7" />
           <div>
             <p className="text-lg font-bold text-white">StockTake</p>
             <p className="text-sm text-slate-400">Inventory, in sync</p>
@@ -99,7 +99,7 @@ export default function Login() {
         <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-950/10 sm:p-8 lg:rounded-3xl lg:p-9">
           <div className="mb-7">
             <div className="flex items-center gap-2.5 lg:hidden">
-              <img src={logo} className="h-8 w-8" alt="StockTake" />
+              <img src={logo} width="24" height="24" className="h-6 w-6" alt="StockTake" />
               <span className="font-bold text-slate-900">StockTake</span>
             </div>
             <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Welcome back</p>
@@ -167,9 +167,12 @@ export default function Login() {
             Sign in with Google
           </button>
 
-          <p className="mt-4 text-xs text-center text-slate-400">
-            By signing in, you agree to our Terms of Service
-          </p>
+          <div className="mt-6 border-t border-slate-100 pt-4">
+            <p className="text-center text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Your flow after sign-in</p>
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-slate-600">
+              <span>Sign in</span><span className="text-blue-500">›</span><span>Dashboard</span><span className="text-blue-500">›</span><span>Products</span><span className="text-blue-500">›</span><span>Sales</span>
+            </div>
+          </div>
         </div>
       </section>
     </div>
