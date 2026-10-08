@@ -8,8 +8,10 @@ import logo from '../assets/stocktake-logo.svg'
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [isRegistering, setIsRegistering] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { login, loginWithGoogle, user, isAuthenticated } = useAuth()
+  const { login, register, loginWithGoogle, user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
   // Redirect if already authenticated
@@ -21,14 +23,25 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (isRegistering && !displayName.trim()) {
+      toast.error('Please enter your name.')
+      return
+    }
     if (!email || !password) {
       toast.error('Please enter both email and password')
       return
     }
     setLoading(true)
     try {
-      await login(email, password)
-
+      if (isRegistering) {
+        if (password.length < 6) {
+          toast.error('Choose a password with at least 6 characters.')
+          return
+        }
+        await register(displayName, email, password)
+      } else {
+        await login(email, password)
+      }
       navigate('/')
 
     } catch (error) {
@@ -102,13 +115,26 @@ export default function Login() {
               <img src={logo} width="24" height="24" className="h-6 w-6" alt="StockTake" />
               <span className="font-bold text-slate-900">StockTake</span>
             </div>
-            <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">Welcome back</p>
-            <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-[1.7rem]">Sign in to your workspace</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">Use your team account to manage inventory and sales.</p>
+            <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-blue-700">{isRegistering ? 'Get started' : 'Welcome back'}</p>
+            <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-[1.7rem]">{isRegistering ? 'Create your account' : 'Sign in to your workspace'}</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-500">{isRegistering ? 'Create a staff account to get started. An admin can update your role later.' : 'Use your team account to manage inventory and sales.'}</p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-4">
+              {isRegistering && <label className="block text-sm font-semibold text-slate-700">
+                Your name
+                <input
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="mt-1.5 block w-full rounded-xl border-slate-300 px-3.5 py-3 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  placeholder="Your name"
+                  disabled={loading}
+                />
+              </label>}
               <label className="block text-sm font-semibold text-slate-700">
                 Email address
                 <input
@@ -125,6 +151,8 @@ export default function Login() {
                 Password
                 <input
                   type="password"
+                  autoComplete={isRegistering ? 'new-password' : 'current-password'}
+                  minLength={isRegistering ? 6 : undefined}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -140,9 +168,16 @@ export default function Login() {
               disabled={loading}
               className="flex w-full justify-center rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-900/15 transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? (isRegistering ? 'Creating account…' : 'Signing in…') : (isRegistering ? 'Create account' : 'Sign in')}
             </button>
           </form>
+
+          <p className="mt-5 text-center text-sm text-slate-600">
+            {isRegistering ? 'Already have an account?' : 'New to StockTake?'}{' '}
+            <button type="button" disabled={loading} onClick={() => setIsRegistering(value => !value)} className="font-bold text-blue-700 transition hover:text-blue-800 disabled:opacity-50">
+              {isRegistering ? 'Sign in' : 'Create an account'}
+            </button>
+          </p>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">

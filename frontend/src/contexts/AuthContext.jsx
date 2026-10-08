@@ -2,7 +2,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
   GoogleAuthProvider,
   signOut,
   onIdTokenChanged
@@ -67,6 +69,24 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const register = async (displayName, email, password) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password)
+      await updateProfile(result.user, { displayName: displayName.trim() })
+      toast.success('Account created. Welcome to StockTake!')
+      return result.user
+    } catch (error) {
+      const messages = {
+        'auth/email-already-in-use': 'An account already exists for this email. Try signing in.',
+        'auth/weak-password': 'Choose a password with at least 6 characters.',
+        'auth/invalid-email': 'Enter a valid email address.',
+        'auth/operation-not-allowed': 'Email and password sign-up is not enabled in Firebase yet.',
+      }
+      toast.error(messages[error.code] || 'Could not create your account. Please try again.')
+      throw error
+    }
+  }
+
   const loginWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider()
@@ -96,6 +116,7 @@ export function AuthProvider({ children }) {
     userProfile,
     loading,
     login,
+    register,
     loginWithGoogle,
     logout,
     isAuthenticated: !!user,

@@ -34,7 +34,7 @@ StockTake_Project/
 
 - Node.js 20+ and npm
 - Python 3.11+
-- A Firebase project with Email/Password and Google providers enabled
+- A Firebase project with Email/Password and Google providers enabled (Email/Password must allow account creation)
 - Docker Compose (optional)
 
 ## Local development
@@ -96,7 +96,7 @@ The Compose stack includes the frontend, API, PostgreSQL, and Redis. Configure r
 
 | Route | Access | Purpose |
 | --- | --- | --- |
-| `/login` | Public | Sign in with Firebase |
+| `/login` | Public | Sign in or create a Firebase account; self-registered users start as sales staff |
 | `/` | All signed-in users | Dashboard and quick links |
 | `/products` | All signed-in users | Browse products; managers/admins can add products |
 | `/sales` | All signed-in users | Record sales and view recent invoices |
@@ -106,7 +106,7 @@ The Compose stack includes the frontend, API, PostgreSQL, and Redis. Configure r
 
 ## API endpoints
 
-The API is mounted at `/api/`. Main resources include `/products/`, `/categories/`, `/suppliers/`, `/warehouses/`, `/transactions/`, `/sales/`, `/purchase-orders/`, and `/users/`.
+The API is mounted at `/api/`. Main resources include `/products/`, `/categories/`, `/suppliers/`, `/warehouses/`, `/transactions/`, `/sales/`, `/purchase-orders/`, and `/users/`. Any signed-in user can read their own `/users/me/` profile; only admins can manage accounts and roles.
 
 Service endpoints are `/health/`, `/swagger/`, `/redoc/`, and `/admin/`. The backend root `/` provides API status information.
 

@@ -354,6 +354,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
+
+    def get_permissions(self):
+        # Any signed-in user can read their own profile; account and role
+        # administration remains restricted to admins.
+        if self.action == 'me':
+            return [IsAuthenticated()]
+        return super().get_permissions()
     
     @action(detail=False, methods=['get'])
     def me(self, request):
