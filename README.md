@@ -108,6 +108,16 @@ The Compose stack includes the frontend, API, PostgreSQL, and Redis. Configure r
 
 The API is mounted at `/api/`. Main resources include `/products/`, `/categories/`, `/suppliers/`, `/warehouses/`, `/transactions/`, `/sales/`, `/purchase-orders/`, and `/users/`. Any signed-in user can read their own `/users/me/` profile; only admins can manage accounts and roles.
 
+### Add sample catalogue products
+
+To add ten sample products to the configured database, run this from the backend directory:
+
+```bash
+python manage.py seed_catalogue
+```
+
+The command is safe to rerun: existing sample SKUs are left unchanged, and new products receive opening stock transactions. Run it against the database used by the deployment if you want the products to appear on the live site.
+
 Service endpoints are `/health/`, `/swagger/`, `/redoc/`, and `/admin/`. The backend root `/` provides API status information.
 
 ## Deploying the frontend to Vercel
