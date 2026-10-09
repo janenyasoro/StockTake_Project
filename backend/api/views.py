@@ -61,6 +61,18 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_fields = ['category', 'supplier', 'warehouse', 'is_active', 'is_featured']
     search_fields = ['name', 'sku', 'description']
     ordering_fields = ['name', 'price', 'stock_quantity', 'created_at']
+
+    def get_queryset(self):
+        """Hide archived products unless an admin explicitly asks for them."""
+        queryset = super().get_queryset()
+        if 'is_active' not in self.request.query_params:
+            queryset = queryset.filter(is_active=True)
+        return queryset
+
+    def perform_destroy(self, instance):
+        """Archive products so sales and stock history remain intact."""
+        instance.is_active = False
+        instance.save(update_fields=['is_active', 'updated_at'])
     
     def get_permissions(self):
         """
@@ -351,7 +363,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing users and their roles
     """
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
 

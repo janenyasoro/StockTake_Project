@@ -63,8 +63,19 @@ PRODUCTS = [
 class Command(BaseCommand):
     help = 'Add ten sample products to the catalogue without changing existing products.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--if-empty',
+            action='store_true',
+            help='Seed only when the catalogue contains no products.',
+        )
+
     @transaction.atomic
     def handle(self, *args, **options):
+        if options['if_empty'] and Product.objects.exists():
+            self.stdout.write('Catalogue already has products; skipping sample data.')
+            return
+
         created_count = 0
         existing_count = 0
 

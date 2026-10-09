@@ -15,10 +15,17 @@ from .models import (
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer used by the administrator's user-management endpoint."""
+    role = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_staff', 'is_superuser', 'is_active']
         read_only_fields = ['id']
+
+    def get_role(self, user):
+        if user.is_superuser:
+            return 'admin'
+        return getattr(getattr(user, 'profile', None), 'role', 'staff')
 
 class CategorySerializer(serializers.ModelSerializer):
     """
@@ -122,7 +129,7 @@ class SaleItemSerializer(serializers.ModelSerializer):
 
 class SaleItemWriteSerializer(serializers.Serializer):
     """Input for recording a sale; price defaults to the current product price."""
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.filter(is_active=True))
     quantity = serializers.IntegerField(min_value=1)
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -161,6 +168,10 @@ class SaleSerializer(serializers.ModelSerializer):
                 product.update_stock(-quantity, 'sale', f'Sale invoice #{sale.invoice_number}')
             except ValueError as error:
                 raise serializers.ValidationError({'line_items': str(error)}) from error
+            transaction_record = product.transactions.first()
+            if transaction_record:
+                transaction_record.user = validated_data.get('user')
+                transaction_record.save(update_fields=['user'])
             SaleItem.objects.create(
                 sale=sale,
                 product=product,

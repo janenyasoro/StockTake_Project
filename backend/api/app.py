@@ -1,8 +1,5 @@
-from django.apps import AppConfig
-from flask_cors import CORS
+"""Compatibility entry point for servers that expect ``api.app:app``."""
 
-CORS(app,origins=["http://localhost:80", "http://192.168.0.101:80"])
+from StockTake.wsgi import application as app
 
-
-class ApiConfig(AppConfig):
-    name = 'api'
+__all__ = ['app']

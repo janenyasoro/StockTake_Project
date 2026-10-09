@@ -10,6 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from decimal import Decimal
 import uuid
 
 class Category(models.Model):
@@ -283,7 +284,9 @@ class Sale(models.Model):
     def calculate_total(self):
         """Recalculate total from sale items"""
         total = sum(item.subtotal for item in self.saleitem_set.all())
-        self.total_amount = total - self.discount_amount + self.tax_amount
+        discount = Decimal(str(self.discount_amount))
+        tax = Decimal(str(self.tax_amount))
+        self.total_amount = total - discount + tax
         self.save()
         return self.total_amount
 
@@ -352,7 +355,7 @@ class PurchaseOrder(models.Model):
         """Update order totals"""
         items = self.purchaseorderitem_set.all()
         self.subtotal = sum(item.subtotal for item in items)
-        self.total = self.subtotal + self.tax
+        self.total = self.subtotal + Decimal(str(self.tax))
         self.save()
         return self.total
 

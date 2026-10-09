@@ -73,15 +73,15 @@ export default function Users() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`px-2 py-1 rounded text-xs font-semibold
-                    ${user.profile?.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                                            user.profile?.role === 'manager' ? 'bg-blue-100 text-blue-800' :
+                    ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                                            user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
                                                 'bg-slate-100 text-slate-700'}`}>
-                                        {user.profile?.role || 'staff'}
+                                        {user.role || 'staff'}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <select
-                                        value={user.profile?.role || 'staff'}
+                                        value={user.role || 'staff'}
                                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                                         disabled={updateRoleMutation.isPending}
                                         aria-label={`Role for ${user.username}`}

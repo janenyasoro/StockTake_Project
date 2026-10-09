@@ -116,7 +116,7 @@ To add ten sample products to the configured database, run this from the backend
 python manage.py seed_catalogue
 ```
 
-The command is safe to rerun: existing sample SKUs are left unchanged, and new products receive opening stock transactions. Run it against the database used by the deployment if you want the products to appear on the live site.
+The command is safe to rerun: existing sample SKUs are left unchanged, and new products receive opening stock transactions. Add `--if-empty` to seed only when the catalogue has no products. Render runs this check after migrations on each service start, so an empty deployed catalogue is populated without adding samples to a catalogue that already contains products.
 
 Service endpoints are `/health/`, `/swagger/`, `/redoc/`, and `/admin/`. The backend root `/` provides API status information.
 
